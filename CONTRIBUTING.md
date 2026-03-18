@@ -7,14 +7,14 @@ Thanks for your interest in contributing! Here's how to get involved.
 1. **Fork** this repository using the Fork button at the top right of this page
 2. **Clone** your fork to your local machine:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/verse-ai-assistant.git
+   git clone https://github.com/YOUR_USERNAME/huddo-ai-assistant-for-verse.git
    ```
 3. **Load** the extension in Chrome (see README for instructions)
 4. Make your changes and test them against a live HCL Verse instance
 
 ## Suggesting Features or Reporting Bugs
 
-- Use the [Issues](../../issues) tab to report bugs or suggest features
+- Use the [Issues](https://github.com/adambrownaus/huddo-ai-assistant-for-verse/issues) tab to report bugs or suggest features
 - For bugs, please include your Chrome version, Verse version/URL pattern, and steps to reproduce
 - For features, describe the use case — what problem does it solve?
 

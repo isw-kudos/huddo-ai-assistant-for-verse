@@ -49,7 +49,7 @@ Click the green **Code** button on this page and choose **Download ZIP**, then u
 
 Or if you use Git:
 ```bash
-git clone https://github.com/ISW-Development/huddo-ai-assistant-for-verse.git
+git clone https://github.com/adambrownaus/huddo-ai-assistant-for-verse.git
 ```
 
 ### 2. Load into Chrome
@@ -107,7 +107,7 @@ All keys are stored locally in Chrome and only ever sent directly to the provide
 - Chrome (or any Chromium-based browser — Edge, Brave, Arc, etc.)
 - Works with HCL Verse's standard web client
 
-> **Note:** HCL Verse's DOM structure can vary between versions and deployments. If the email body or reply injection isn't working on your instance, please [open an issue](../../issues) with your Verse version and we'll add support.
+> **Note:** HCL Verse's DOM structure can vary between versions and deployments. If the email body or reply injection isn't working on your instance, please [open an issue](https://github.com/adambrownaus/huddo-ai-assistant-for-verse/issues) with your Verse version and we'll add support.
 
 ---
 
