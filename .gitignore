@@ -1,0 +1,15 @@
+# Ignored by Git — don't commit these
+.DS_Store
+*.DS_Store
+Thumbs.db
+
+# No API keys or secrets should ever be committed
+*.env
+.env*
+secrets.json
+
+# Chrome extension build artifacts (if any added later)
+dist/
+build/
+*.crx
+*.pem
