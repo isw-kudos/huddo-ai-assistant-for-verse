@@ -41,6 +41,8 @@ const LANGUAGE_MAP = [
   { prefix: "cs",    instruction: "Odpovídejte česky, používejte formální oslovení, pokud e-mail není neformální." },
   { prefix: "hu",    instruction: "Válaszoljon magyarul, használjon formális megszólítást, ha az e-mail nem informális." },
   { prefix: "nl",    instruction: "Antwoord in het Nederlands. Gebruik de formele u-vorm tenzij de e-mail informeel is." },
+  { prefix: "eu",    instruction: "Erantzun euskaraz. Erabili tratamendu formala, mezu elektronikoa ez bada informala." },
+  { prefix: "ca",    instruction: "Respon en català. Utilitza el tractament formal de vostè, llevat que el correu sigui informal." },
 ];
 
 function getLanguageInstruction(langCode) {
