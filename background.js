@@ -133,6 +133,24 @@ async function callOllama(messages, ollamaUrl, ollamaModel, systemPrompt) {
   return (await res.json()).message.content;
 }
 
+async function callDominoIQ(messages, dominoIQUrl, dominoIQToken, systemPrompt) {
+  const base = (dominoIQUrl || "").replace(/\/$/, "");
+  if (!base) throw new Error("No Domino IQ URL set. Click the extension icon to configure it.");
+  const headers = { "Content-Type": "application/json" };
+  if (dominoIQToken) headers["Authorization"] = `Bearer ${dominoIQToken}`;
+  const res = await fetch(`${base}/v1/chat/completions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: "dominoiq",
+      max_tokens: 2048,
+      messages: [{ role: "system", content: systemPrompt }, ...messages]
+    })
+  });
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || `Domino IQ error: ${res.status} ${res.statusText}`); }
+  return (await res.json()).choices[0].message.content;
+}
+
 // ── Message handler ───────────────────────────────────────────────────────────
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
@@ -158,13 +176,13 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   (async () => {
     try {
       const stored = await chrome.storage.local.get(
-        ["apiKey", "provider", "ollamaUrl", "ollamaModel", "languageOverride"]
+        ["apiKey", "provider", "ollamaUrl", "ollamaModel", "dominoIQUrl", "dominoIQToken", "languageOverride"]
       );
 
       const langCode = resolveLanguage(stored.languageOverride, msg.browserLang);
       const systemPrompt = buildSystemPrompt(getLanguageInstruction(langCode));
       const prov = stored.provider || "claude";
-      const { apiKey, ollamaUrl, ollamaModel } = stored;
+      const { apiKey, ollamaUrl, ollamaModel, dominoIQUrl, dominoIQToken } = stored;
       let reply;
 
       if (prov === "claude") {
@@ -178,6 +196,8 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         reply = await callGemini(msg.messages, apiKey, systemPrompt);
       } else if (prov === "ollama") {
         reply = await callOllama(msg.messages, ollamaUrl, ollamaModel, systemPrompt);
+      } else if (prov === "dominoiq") {
+        reply = await callDominoIQ(msg.messages, dominoIQUrl, dominoIQToken, systemPrompt);
       } else {
         throw new Error(`Unknown provider: ${prov}`);
       }
