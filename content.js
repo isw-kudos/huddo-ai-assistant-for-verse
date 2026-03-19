@@ -422,10 +422,6 @@ const LANG_NAMES = {
   "pt-BR": "Brazilian Portuguese", "ru": "Russian",
   "zh": "Simplified Chinese", "zh-TW": "Traditional Chinese",
 };
-function langDirective() {
-  if (!sessionLang) return "";
-  return `Respond in ${LANG_NAMES[sessionLang] || sessionLang}.\n`;
-}
 
 // Resolve active language from storage, falling back to browser lang
 function getActiveLang(storedOverride) {
@@ -665,8 +661,9 @@ async function draftWithTone(ctx, tone, s) {
   appendMessage("user", s.applyingTone(tone), true);
   setLoading(true);
 
+  const langNote = sessionLang ? ` Write your response in ${LANG_NAMES[sessionLang] || sessionLang}.` : "";
   const messages = [{ role: "user", content:
-    `${identity} ${langDirective()}${action}. Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
+    `${identity} ${action}.${langNote} Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
     + `Subject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${sourceText}`
   }];
 
@@ -831,8 +828,9 @@ async function createPanel() {
         history = [];
         appendMessage("user", s.summarising, true);
         setLoading(true);
+        const langNote = sessionLang ? ` Write your response in ${LANG_NAMES[sessionLang] || sessionLang}.` : "";
         history = [{ role: "user", content:
-          `${langDirective()}Summarise this email in 3 bullet points.\n\nSubject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
+          `Summarise this email in 3 bullet points.${langNote}\n\nSubject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
         }];
         const resp = await aiRequest(history);
         setLoading(false);
@@ -844,8 +842,9 @@ async function createPanel() {
         const identity = ctx.myName ? `You are replying as ${ctx.myName}.` : "";
         appendMessage("user", s.drafting, true);
         setLoading(true);
+        const langNote = sessionLang ? ` Write your response in ${LANG_NAMES[sessionLang] || sessionLang}.` : "";
         const replyMessages = [{ role: "user", content:
-          `${identity} ${langDirective()}Draft a professional reply to this email on behalf of ${ctx.myName || "the recipient"}. `
+          `${identity} Draft a professional reply to this email on behalf of ${ctx.myName || "the recipient"}.${langNote} `
           + `Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
           + `Subject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
         }];
