@@ -413,6 +413,20 @@ const LANG_LIST = [
 // Session-only language override — resets when the panel is closed
 let sessionLang = null;
 
+// Returns a language instruction prefix for AI messages when session lang is active
+const LANG_NAMES = {
+  "en-AU": "Australian English", "en-GB": "British English", "en": "English",
+  "ca": "Catalan", "cs": "Czech", "de": "German", "es": "Spanish",
+  "eu": "Basque", "fr": "French", "hu": "Hungarian", "it": "Italian",
+  "ja": "Japanese", "ko": "Korean", "nl": "Dutch", "pl": "Polish",
+  "pt-BR": "Brazilian Portuguese", "ru": "Russian",
+  "zh": "Simplified Chinese", "zh-TW": "Traditional Chinese",
+};
+function langDirective() {
+  if (!sessionLang) return "";
+  return `Respond in ${LANG_NAMES[sessionLang] || sessionLang}.\n`;
+}
+
 // Resolve active language from storage, falling back to browser lang
 function getActiveLang(storedOverride) {
   const code = (storedOverride && storedOverride !== "")
@@ -652,7 +666,7 @@ async function draftWithTone(ctx, tone, s) {
   setLoading(true);
 
   const messages = [{ role: "user", content:
-    `${identity} ${action}. Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
+    `${identity} ${langDirective()}${action}. Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
     + `Subject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${sourceText}`
   }];
 
@@ -818,7 +832,7 @@ async function createPanel() {
         appendMessage("user", s.summarising, true);
         setLoading(true);
         history = [{ role: "user", content:
-          `Summarise this email in 3 bullet points.\n\nSubject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
+          `${langDirective()}Summarise this email in 3 bullet points.\n\nSubject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
         }];
         const resp = await aiRequest(history);
         setLoading(false);
@@ -831,7 +845,7 @@ async function createPanel() {
         appendMessage("user", s.drafting, true);
         setLoading(true);
         const replyMessages = [{ role: "user", content:
-          `${identity} Draft a professional reply to this email on behalf of ${ctx.myName || "the recipient"}. `
+          `${identity} ${langDirective()}Draft a professional reply to this email on behalf of ${ctx.myName || "the recipient"}. `
           + `Output ONLY the body text — no subject line, no preamble, no explanation.\n\n`
           + `Subject: ${ctx.subject}\nFrom: ${ctx.sender}\n\n${ctx.body}`
         }];
@@ -865,7 +879,7 @@ async function createPanel() {
         appendMessage("user", s.findingActions, true);
         setLoading(true);
         history = [{ role: "user", content:
-          `List all action items or tasks mentioned in this email as a numbered list. `
+          `${langDirective()}List all action items or tasks mentioned in this email as a numbered list. `
           + `Output ONLY the action items — no preamble, no summary of the email.\n\n`
           + `Subject: ${ctx.subject}\n\n${ctx.body}`
         }];

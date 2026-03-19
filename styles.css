@@ -82,14 +82,19 @@
   line-height: 1;
 }
 
-/* ── Language picker slide-down ── */
+/* ── Language picker — absolute overlay so it doesn't get clipped by panel overflow:hidden ── */
 #cvp-lang-picker {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  z-index: 10;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.22s ease;
   background: #faf9f7;
   border-bottom: 1px solid #e8e6e0;
-  flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
 }
 #cvp-lang-picker.open {
   max-height: 192px;
