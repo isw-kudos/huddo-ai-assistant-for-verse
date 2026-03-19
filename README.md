@@ -6,6 +6,9 @@ A Chrome and Firefox extension that brings AI-powered email assistance directly 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Chrome%20%7C%20Firefox-yellow)
 
+> **⚠️ Disclaimer — Use at your own risk.**
+> This extension is an independent, open-source community project and is **not affiliated with, endorsed by, or supported by HCL Technologies, Anthropic, OpenAI, or Google**. It is provided "as is" with no warranty of any kind. When you use it, your email content is sent to the third-party AI provider you configure — you are responsible for ensuring that is appropriate for your organisation's data handling and compliance requirements. AI-generated content (summaries, replies, action items) may be inaccurate or incomplete and **must always be reviewed before sending**. See the [full disclaimer](#disclaimer) below.
+
 ---
 
 ## Features
@@ -30,6 +33,7 @@ A Chrome and Firefox extension that brings AI-powered email assistance directly 
 | [ChatGPT (OpenAI)](https://platform.openai.com) | Pay per use | Sent to OpenAI | API key required |
 | [Gemini (Google)](https://aistudio.google.com) | Free tier available | Sent to Google | API key required |
 | [Ollama](https://ollama.com) | **Free** | **Stays on your machine** | Local install required |
+| Domino IQ (HCL) | Included with Domino 14.5+ | **Stays on your server** | Admin setup required |
 
 ---
 
@@ -49,7 +53,7 @@ Click the green **Code** button on this page and choose **Download ZIP**, then u
 
 Or if you use Git:
 ```bash
-git clone https://github.com/adambrownaus/huddo-ai-assistant-for-verse.git
+git clone https://github.com/isw-kudos/huddo-ai-assistant-for-verse.git
 ```
 
 ### 2. Load into Chrome or Firefox
@@ -120,7 +124,7 @@ All keys are stored locally in Chrome and only ever sent directly to the provide
 - Chrome (or any Chromium-based browser — Edge, Brave, Arc, etc.) and Firefox 109+
 - Works with HCL Verse's standard web client
 
-> **Note:** HCL Verse's DOM structure can vary between versions and deployments. If the email body or reply injection isn't working on your instance, please [open an issue](https://github.com/adambrownaus/huddo-ai-assistant-for-verse/issues) with your Verse version and we'll add support.
+> **Note:** HCL Verse's DOM structure can vary between versions and deployments. If the email body or reply injection isn't working on your instance, please [open an issue](https://github.com/isw-kudos/huddo-ai-assistant-for-verse/issues) with your Verse version and we'll add support.
 
 ---
 
@@ -129,7 +133,7 @@ All keys are stored locally in Chrome and only ever sent directly to the provide
 ```
 huddo-ai-assistant-for-verse/
 ├── manifest.json      # Extension config & permissions
-├── background.js      # AI provider routing (Claude, OpenAI, Gemini, Ollama) + language system
+├── background.js      # AI provider routing (Claude, OpenAI, Gemini, Ollama, Domino IQ) + language system
 ├── content.js         # UI panel, localisation, email reading, Verse DOM injection
 ├── styles.css         # Panel styling
 ├── popup.html         # Settings popup
@@ -168,9 +172,21 @@ To contribute:
 
 ---
 
+## Disclaimer
+
+This extension is an independent, open-source project created by [ISW Development Pty Ltd](https://isw.net.au). It is **not affiliated with, endorsed by, or in any way connected to HCL Technologies, Anthropic, OpenAI, Google, or any other company** whose products it integrates with.
+
+**Use at your own risk.** This software is provided "as is", without warranty of any kind — express or implied — including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The authors accept no liability for any loss or damage arising from its use.
+
+**Data & privacy responsibility:** When you use this extension, the content of your emails is transmitted to whichever AI provider you have configured. It is your responsibility to ensure this is permitted under your organisation's data handling policies, your employment agreement, and any applicable laws or regulations (including but not limited to GDPR, HIPAA, and industry-specific compliance requirements). The authors accept no responsibility for the unauthorised disclosure of confidential or sensitive information.
+
+**AI-generated content:** Summaries, draft replies, and other AI-generated content may be inaccurate, incomplete, or inappropriate. Always review AI output carefully before acting on it or sending it. The authors accept no responsibility for decisions made or communications sent based on AI-generated content produced by this extension.
+
+---
+
 ## License
 
-MIT License — Copyright (c) 2026 ISW Development Pty Ltd  
+MIT License — Copyright (c) 2026 ISW Development Pty Ltd
 See [LICENSE](LICENSE) for full details.
 
 ---

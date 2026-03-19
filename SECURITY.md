@@ -24,3 +24,14 @@ Instead, please email the maintainer directly or use GitHub's private vulnerabil
 |---------|-----------|
 | 1.2.x   | ✅ Yes    |
 | < 1.2   | ❌ No     |
+
+## No Warranty / Use at Your Own Risk
+
+This extension is provided "as is", without warranty of any kind. The maintainers make no guarantees about the security, reliability, or fitness of this software for any particular purpose, including use in regulated or sensitive environments.
+
+You are responsible for:
+- Ensuring that sending email content to a third-party AI provider is permitted under your organisation's policies and applicable law
+- Securing your API keys
+- Reviewing AI-generated output before acting on it or sending it
+
+See the full [Disclaimer](README.md#disclaimer) in the README.

@@ -2,6 +2,8 @@
 
 Thanks for your interest in contributing! Here's how to get involved.
 
+> **Note:** By contributing to this project you agree that your contributions are made under the same [MIT License](LICENSE) as the project, and that the project is provided "as is" with no warranty. See the [Disclaimer](README.md#disclaimer) in the README for full details.
+
 ## Getting Started
 
 1. **Fork** this repository using the Fork button at the top right of this page
@@ -14,7 +16,7 @@ Thanks for your interest in contributing! Here's how to get involved.
 
 ## Suggesting Features or Reporting Bugs
 
-- Use the [Issues](https://github.com/adambrownaus/huddo-ai-assistant-for-verse/issues) tab to report bugs or suggest features
+- Use the [Issues](https://github.com/isw-kudos/huddo-ai-assistant-for-verse/issues) tab to report bugs or suggest features
 - For bugs, please include your Chrome version, Verse version/URL pattern, and steps to reproduce
 - For features, describe the use case — what problem does it solve?
 
