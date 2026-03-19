@@ -7,7 +7,7 @@ A Chrome and Firefox extension that brings AI-powered email assistance directly 
 ![Platform](https://img.shields.io/badge/platform-Chrome%20%7C%20Firefox-yellow)
 
 > **⚠️ Disclaimer — Use at your own risk.**
-> This extension is an independent, open-source community project and is **not affiliated with, endorsed by, or supported by HCL Technologies, Anthropic, OpenAI, or Google**. It is provided "as is" with no warranty of any kind. When you use it, your email content is sent to the third-party AI provider you configure — you are responsible for ensuring that is appropriate for your organisation's data handling and compliance requirements. AI-generated content (summaries, replies, action items) may be inaccurate or incomplete and **must always be reviewed before sending**. See the [full disclaimer](#disclaimer) below.
+> This extension is an independent, open-source community project and is **not affiliated with, endorsed by, or supported by HCL Software, Anthropic, OpenAI, or Google**. It is provided "as is" with no warranty of any kind. When you use it, your email content is sent to the third-party AI provider you configure — you are responsible for ensuring that is appropriate for your organisation's data handling and compliance requirements. AI-generated content (summaries, replies, action items) may be inaccurate or incomplete and **must always be reviewed before sending**. See the [full disclaimer](#disclaimer) below.
 
 ---
 
@@ -174,7 +174,7 @@ To contribute:
 
 ## Disclaimer
 
-This extension is an independent, open-source project created by [ISW Development Pty Ltd](https://isw.net.au). It is **not affiliated with, endorsed by, or in any way connected to HCL Technologies, Anthropic, OpenAI, Google, or any other company** whose products it integrates with.
+This extension is an independent, open-source project created by [ISW Development Pty Ltd](https://isw.net.au). It is **not affiliated with, endorsed by, or in any way connected to HCL Software, Anthropic, OpenAI, Google, or any other company** whose products it integrates with.
 
 **Use at your own risk.** This software is provided "as is", without warranty of any kind — express or implied — including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The authors accept no liability for any loss or damage arising from its use.
 
