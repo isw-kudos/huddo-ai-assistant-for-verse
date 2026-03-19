@@ -100,11 +100,29 @@ Ollama runs AI models entirely on your own machine — no API key, no cost, no d
    ```bash
    ollama pull llama3
    ```
-3. Ollama starts automatically at `http://localhost:11434`
+3. **Allow the extension to connect to Ollama** — by default Ollama only accepts requests from `localhost`. Since the extension runs with a `chrome-extension://` origin, you need to set the `OLLAMA_ORIGINS` environment variable before starting Ollama.
+
+   **Mac — one-time Terminal session:**
+   ```bash
+   # Quit Ollama from the menu bar first, then:
+   OLLAMA_ORIGINS=* ollama serve
+   ```
+
+   **Mac — persistent (survives reboots):**
+   ```bash
+   launchctl setenv OLLAMA_ORIGINS "*"
+   # Then start Ollama from the menu bar as normal
+   ```
+
+   **Windows:**
+   Add `OLLAMA_ORIGINS` = `*` to your System Environment Variables, then restart the Ollama service.
+
 4. In the extension settings, select **Ollama**, enter the model name (`llama3`), and save
 
-Other good models to try: `mistral`, `phi3`, `gemma3`  
+Other good models to try: `mistral`, `phi3`, `gemma3`
 Full model list: [ollama.com/library](https://ollama.com/library)
+
+> **Troubleshooting:** If you see _"Ollama blocked the request (403 Forbidden)"_ in the extension panel, `OLLAMA_ORIGINS` is not set correctly. Follow step 3 above.
 
 ---
 
