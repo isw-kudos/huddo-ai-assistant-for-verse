@@ -905,7 +905,8 @@ function appendMessage(role, text, silent = false) {
 async function runPrompt(userText) {
   if (!userText.trim()) return;
   appendMessage("user", userText);
-  history.push({ role: "user", content: userText });
+  const langNote = sessionLang ? ` Write your response in ${LANG_NAMES[sessionLang] || sessionLang}.` : "";
+  history.push({ role: "user", content: userText + langNote });
   setLoading(true);
   const resp = await aiRequest(history);
   setLoading(false);
