@@ -36,6 +36,7 @@ chrome.storage.local.get(
   ["apiKey", "verseUrl", "provider", "ollamaUrl", "ollamaModel", "languageOverride"],
   (stored) => {
     if (stored.verseUrl)    verseUrlEl.value    = stored.verseUrl;
+    if (!stored.verseUrl)   inheritVerseUrl(verseUrlEl);
     if (stored.apiKey)      keyEl.value         = stored.apiKey;
     if (stored.provider)    providerEl.value    = stored.provider;
     if (stored.ollamaUrl)   ollamaUrlEl.value   = stored.ollamaUrl;
@@ -50,7 +51,17 @@ chrome.storage.local.get(
   }
 );
 
-providerEl.addEventListener("change", () => updateUI(providerEl.value));
+providerEl.addEventListener("change", () => { updateUI(providerEl.value); saveAll(); });
+
+function inheritVerseUrl(inputEl) {
+  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+    if (!tab) return;
+    chrome.tabs.sendMessage(tab.id, { type: 'GET_SHARED_VERSE_URL' }, res => {
+      if (chrome.runtime.lastError) return;
+      if (res?.url && !inputEl.value) inputEl.value = res.url;
+    });
+  });
+}
 
 function updateUI(prov) {
   const isOllama = prov === "ollama";
@@ -65,31 +76,33 @@ function updateUI(prov) {
   }
 }
 
-document.getElementById("save").onclick = () => {
-  const url    = verseUrlEl.value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
-  const prov   = providerEl.value;
-  const key    = keyEl.value.trim();
-  const oUrl   = ollamaUrlEl.value.trim();
-  const oMod   = ollamaModelEl.value.trim();
-  // Always save languageOverride — even "" means auto-detect
+function saveAll() {
+  const url  = verseUrlEl.value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const prov = providerEl.value;
+  const key  = keyEl.value.trim();
+  const oUrl = ollamaUrlEl.value.trim();
+  const oMod = ollamaModelEl.value.trim();
   const lang = langOverrideEl.value;
 
-  if (!url) { showStatus("Please enter your Verse URL", false); return; }
-  if (prov !== "ollama" && !key) { showStatus("Please enter your API key", false); return; }
+  if (!url) { showStatus("Enter your Verse URL to save.", false); return; }
+  if (prov !== "ollama" && !key) { showStatus("Enter your API key to save.", false); return; }
 
   chrome.storage.local.set(
     { apiKey: key, verseUrl: url, provider: prov, ollamaUrl: oUrl, ollamaModel: oMod, languageOverride: lang },
-    () => {
-      const langLabel = lang
-        ? langOverrideEl.options[langOverrideEl.selectedIndex].text
-        : `Auto-detect (${detectedLangEl.textContent})`;
-      showStatus(`Settings saved! Language: ${langLabel}`, true);
-    }
+    () => { showStatus("Saved", true); setTimeout(() => { statusEl.textContent = ""; statusEl.className = ""; }, 2000); }
   );
-};
+}
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+const debouncedSave = debounce(saveAll, 800);
+
+[verseUrlEl, keyEl, ollamaUrlEl, ollamaModelEl].forEach(el => el.addEventListener("input", debouncedSave));
+langOverrideEl.addEventListener("change", saveAll);
 
 function showStatus(msg, ok) {
   statusEl.textContent = msg;
   statusEl.className = ok ? "status-ok" : "status-err";
-  if (ok) setTimeout(() => { statusEl.textContent = ""; statusEl.className = ""; }, 5000);
 }

@@ -6,7 +6,7 @@ window.__cvpLoaded = true;
 // All strings the user sees in the panel, translated per language code
 const UI_STRINGS = {
   "en-AU": {
-    title:        "Huddo AI Assistant for Verse",
+    title:        "Huddo AI Extension for HCL Verse",
     summarise:    "Summarise",
     reply:        "Draft reply",
     tone:         "Improve tone",
@@ -26,7 +26,7 @@ const UI_STRINGS = {
     insertFail:   "Could not auto-insert — use the button below",
   },
   "en-GB": {
-    title:        "Huddo AI Assistant for Verse",
+    title:        "Huddo AI Extension for HCL Verse",
     summarise:    "Summarise",
     reply:        "Draft reply",
     tone:         "Improve tone",
@@ -46,7 +46,7 @@ const UI_STRINGS = {
     insertFail:   "Could not auto-insert — use the button below",
   },
   "en": {
-    title:        "Huddo AI Assistant for Verse",
+    title:        "Huddo AI Extension for HCL Verse",
     summarise:    "Summarize",
     reply:        "Draft reply",
     tone:         "Improve tone",
@@ -604,7 +604,7 @@ function makeDraggable(panel) {
     panel.style.left = Math.max(0, startLeft + (e.clientX - startX)) + 'px';
     panel.style.top  = Math.max(0, startTop  + (e.clientY - startY)) + 'px';
   });
-  document.addEventListener('mouseup', () => { dragging = false; });
+  document.addEventListener('mouseup', () => { if (dragging) { dragging = false; savePanelPosition(panel); } });
 }
 
 function makeResizable(panel) {
@@ -629,7 +629,37 @@ function makeResizable(panel) {
     if (dir.includes('s')) panel.style.height = Math.max(minH, startH + dy) + 'px';
     if (dir.includes('n')) { const nH = Math.max(minH, startH - dy); panel.style.height = nH + 'px'; panel.style.top = (startTop + startH - nH) + 'px'; }
   });
-  document.addEventListener('mouseup', () => { resizing = false; });
+  document.addEventListener('mouseup', () => { if (resizing) { resizing = false; savePanelPosition(panel); } });
+}
+
+function savePanelPosition(panel) {
+  const { left, top, width, height } = panel.style;
+  try { chrome.storage.local.set({ cvp_pos: { left, top, width, height } }); } catch(e) {}
+}
+
+async function restorePanelPosition(panel) {
+  return new Promise(resolve => {
+    chrome.storage.local.get('cvp_pos', r => {
+      const pos = r.cvp_pos;
+      if (pos && pos.left) {
+        panel.style.left   = pos.left;
+        panel.style.top    = pos.top;
+        panel.style.right  = 'auto';
+        panel.style.bottom = 'auto';
+        panel.style.maxHeight = 'none';
+        if (pos.width)  panel.style.width  = pos.width;
+        if (pos.height) panel.style.height = pos.height;
+      } else {
+        const btns = Array.from(document.querySelectorAll('[data-huddo-ext-btn]'));
+        const maxSlot = Math.max(0, btns.length - 1);
+        panel.style.bottom = (90 + maxSlot * 56 + 48 + 10) + 'px';
+        panel.style.right  = '7px';
+        panel.style.top    = 'auto';
+        panel.style.left   = 'auto';
+      }
+      resolve();
+    });
+  });
 }
 
 function showTonePicker(ctx, s) {
@@ -800,10 +830,11 @@ async function createPanel() {
     <div class="cvp-resizer se" data-dir="se"></div>
   `;
   document.body.appendChild(panel);
+  await restorePanelPosition(panel);
   makeDraggable(panel);
   makeResizable(panel);
 
-  document.getElementById("cvp-close").onclick = () => { sessionLang = null; panel.remove(); };
+  document.getElementById("cvp-close").onclick = () => { sessionLang = null; savePanelPosition(panel); panel.remove(); };
   document.getElementById("cvp-send").onclick = sendMessage;
 
   // Language picker — build and wire the globe toggle
@@ -923,17 +954,63 @@ function sendMessage() {
   runPrompt(text);
 }
 
+// ── Extension stacking ─────────────────────────────────────────────────────────
+// Uses a DOM attribute as shared state so Huddo extensions coordinate
+// across Chrome's content-script isolated worlds (window is not shared).
+const HUDDO_BTN_ATTR = 'data-huddo-ext-btn';
+const HUDDO_BASE_BTM = 90;
+const HUDDO_SLOT_SZ  = 56;
+
+function getHuddoSlot(btnId) {
+  const btns = Array.from(document.querySelectorAll(`[${HUDDO_BTN_ATTR}]`));
+  btns.sort((a, b) => Number(a.getAttribute(HUDDO_BTN_ATTR)) - Number(b.getAttribute(HUDDO_BTN_ATTR)));
+  const idx = btns.findIndex(b => b.id === btnId);
+  return idx < 0 ? 0 : idx;
+}
+
+function positionToggleBtn() {
+  const btn = document.getElementById('cvp-toggle');
+  if (!btn) return;
+  btn.style.bottom = (HUDDO_BASE_BTM + getHuddoSlot('cvp-toggle') * HUDDO_SLOT_SZ) + 'px';
+}
+
 function addToggleButton() {
   if (document.getElementById("cvp-toggle")) return;
   const btn = document.createElement("button");
   btn.id = "cvp-toggle"; btn.title = "Open Huddo AI Assistant";
   btn.textContent = "✦";
-  btn.onclick = () => { history = []; createPanel(); };
+  btn.onclick = () => {
+    const panel = document.getElementById("claude-verse-panel");
+    if (panel) { sessionLang = null; panel.remove(); }
+    else { history = []; createPanel(); }
+  };
   document.body.appendChild(btn);
+  btn.setAttribute(HUDDO_BTN_ATTR, String(Date.now()));
+  positionToggleBtn();
+
+  const obs = new MutationObserver(mutations => {
+    const relevant = mutations.some(m =>
+      m.type === 'attributes' ||
+      Array.from(m.addedNodes).some(n => n.hasAttribute?.(HUDDO_BTN_ATTR)) ||
+      Array.from(m.removedNodes).some(n => n.hasAttribute?.(HUDDO_BTN_ATTR))
+    );
+    if (relevant) positionToggleBtn();
+  });
+  obs.observe(document.body, {
+    subtree: true, childList: true,
+    attributes: true, attributeFilter: [HUDDO_BTN_ATTR]
+  });
 }
 
 shouldActivate().then(active => {
   if (!active) return;
+
+  // Share the configured URL via page localStorage so other Huddo extensions
+  // can inherit it if they haven't been configured yet.
+  chrome.storage.local.get('verseUrl', ({ verseUrl }) => {
+    try { if (verseUrl) localStorage.setItem('__huddo_verse_url', verseUrl); } catch(e) {}
+  });
+
   const observer = new MutationObserver(() => {
     if (document.querySelector(".lotusShell, #lsMainFrame, .verse-app, .pim-mailread-container, .socpimComposeView")) {
       addToggleButton(); observer.disconnect();
@@ -941,6 +1018,15 @@ shouldActivate().then(active => {
   });
   observer.observe(document.body, { childList: true, subtree: true });
   addToggleButton();
+});
+
+// Allow the popup to retrieve the shared Verse URL written by any Huddo extension
+chrome.runtime.onMessage.addListener((msg, _sender, respond) => {
+  if (msg.type === 'GET_SHARED_VERSE_URL') {
+    try { respond({ url: localStorage.getItem('__huddo_verse_url') || '' }); }
+    catch(e) { respond({ url: '' }); }
+    return true;
+  }
 });
 
 } // end double-injection guard

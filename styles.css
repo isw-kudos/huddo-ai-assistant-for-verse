@@ -1,7 +1,7 @@
 #cvp-toggle {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: 90px;
+  right: 7px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -18,8 +18,8 @@
 
 #claude-verse-panel {
   position: fixed;
-  bottom: 88px;
-  right: 28px;
+  bottom: 150px;
+  right: 7px;
   width: 380px;
   max-height: 50vh;
   min-width: 260px;
