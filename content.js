@@ -449,6 +449,7 @@ async function getStrings() {
 
 async function shouldActivate() {
   return new Promise(resolve => {
+    if (location.hash.startsWith('#/tearoff/')) { resolve(false); return; }
     chrome.storage.local.get("verseUrl", ({ verseUrl }) => {
       if (!verseUrl) { resolve(false); return; }
       try {
